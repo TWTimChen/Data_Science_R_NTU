@@ -6,6 +6,6 @@
 4. area plot
 5. density
 6. density_2d
-7. polygun
+7. polygon
 8. map
 9. networking

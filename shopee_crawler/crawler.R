@@ -76,7 +76,7 @@ item_order = (0:(item_number/50-1))*50
 json_url = sprintf('https://shopee.tw/api/v1/search_items/?by=pop&order=desc&newest=%s&limit=50&categoryids=62',
                    as.character(item_order))
 
-## json crawler function ##
+# json crawler function 
 get_items = function(json_url){
   res_json = GET(url = json_url,
                  `user-agent` = userAgent,
@@ -124,7 +124,7 @@ item_df = res_list %>% map(.f = shopeeDF) %>%
 save(item_df,file = './shopee_girl_items.CSV')
 load('./shopee_girl_items.CSV')
 
-## visualization
+## visualization ##
 # fix the value of price
 item_df %<>% 
   transform(price_min = price_min/1e+5,
