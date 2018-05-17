@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "library(tidyverse)\nlibrary(magrittr)\n\ndata <- readLines(\"download/A_lvr_land_A.csv\", encoding=\"big5\") %>% \n  iconv(\"big5\", \"utf8\") %>% map(function(i) {strsplit(i,\",\")})\ndata %<>% do.call(rbind,.) %>% do.call(rbind,.) %>% data.frame(stringsAsFactors=FALSE)\ncolnames(data) <- data[1,]   \ndata = data[-c(1:2),]\ndata %>% View\n\n\n\n",
+    "created" : 1526527395740.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1002074443",
+    "id" : "A78E79A7",
+    "lastKnownWriteTime" : 1526529716,
+    "last_content_update" : 1526529716660,
+    "path" : "~/Desktop/house price/test_parse.R",
+    "project_path" : "test_parse.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

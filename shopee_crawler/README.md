@@ -23,3 +23,7 @@
         * https://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf
     * purrr cheatsheet
         * https://github.com/rstudio/cheatsheets/raw/master/purrr.pdf
+
+
+# 品名文字雲
+1. text_analysis.R

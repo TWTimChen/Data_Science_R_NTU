@@ -2,7 +2,7 @@ library(tidyverse)
 library(magrittr)
 
 # laod in data
-titanicTrain = read_csv("titanicTrain.csv")
+titanicTrain = read_csv("project2/titanicTrain.csv")
 titanicTrain %<>% filter(!is.na(survived))
 
 # is.boat is powerful!
@@ -26,7 +26,8 @@ titanicTrain %>%
 # generate first name column
 titanicTrain$name.first = 
   strsplit(titanicTrain$name,",") %>% 
-  do.call(rbind,.) %>% .[,1] 
+  do.call(rbind,.) %>% .[,2] %>% 
+  strsplit(" ") %>% do.call(rbind,.) %>% .[,3] 
 
 titanicTrain %>% group_by(name.first) %>% summarise(m=n()) %>% 
   arrange(desc(m)) %>% head(10) %>% 
@@ -70,4 +71,4 @@ titanicTrain %>% filter(!is.na(ngroup)) %>%
   group_by(ngroup) %>% summarise(m=sum(survived)/length(ngroup)) %>% 
   ggplot(mapping = aes(ngroup,m)) + geom_col()
 
-
+titanicTrain %>% View 
