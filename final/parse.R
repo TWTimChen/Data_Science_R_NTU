@@ -74,7 +74,8 @@ convert = function(section)
     factor(levels = use$use, labels = use$use_id) %>% 
     as.character()
   
-  data$use = tmp_use[which(is.na(tmp_use))] = "-1"
+  tmp_use[which(is.na(tmp_use))] = "-1"
+  data$use = tmp_use
   
   # 有無 convert
   data$is.comp = tmp_data$compartmented %>% chartr("有無","10",.) 
@@ -85,7 +86,6 @@ convert = function(section)
 }
 
 # test
-convert(section[1]) %>% View
 
 # mapping & fix type problem
 result = map(section,convert) %>% do.call(rbind,.)
@@ -111,6 +111,7 @@ result %<>% transform(lat = as.numeric(lat),
                       is.furn = as.logical(as.numeric(is.furn))) 
 
 result %<>% select(-room,-hall,health)
+result$unit_PRICE = result$PRICE/result$total_size
 
 # output
 write_csv(result,"real_estate_ready.CSV")
