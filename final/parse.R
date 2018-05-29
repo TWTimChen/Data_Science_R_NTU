@@ -18,15 +18,14 @@ section = sprintf("%sQ%s",
                   rep(1:4,3))
 
 # function
-convert = function(section)
-{
+convert = function(section){
   # load in 
   file_path = sprintf("~/Desktop/R /data/real_estate/%s.csv",section)
   tmp_data = parser(file_path)
   
   # select proper columns
   tmp_data$section = rep(section,nrow(tmp_data))
-  data = select(tmp_data,section,lat,lng,unit_PRICE,PRICE,room,hall,health,total_size,land_size)
+  data = select(tmp_data,section,address,lat,lng,unit_PRICE,PRICE,room,hall,health,total_size,land_size)
   
   # transform $pen to features
   tmp_pen = tmp_data$pen %>% 
@@ -112,6 +111,7 @@ result %<>% transform(lat = as.numeric(lat),
 
 result %<>% select(-room,-hall,health)
 result$unit_PRICE = result$PRICE/result$total_size
+result$id = 1:nrow(result)
 
 # output
 write_csv(result,"real_estate_ready.CSV")
