@@ -22,7 +22,7 @@ function(input, output, session) {
                                                             house_age %in% input$slide.age[1]:input$slide.age[2],
                                                             total_size >= input$slide.area.size[1] & total_size <= input$slide.area.size[2],
                                                             PRICE >= input$slide.low.price & PRICE <= input$slide.high.price) %>% 
-                                   select(lat,lng)
+                                   select(lat,lng,PRICE,total_size,house_age)
   })
   
  
@@ -32,11 +32,11 @@ function(input, output, session) {
   # }, ignoreNULL = FALSE)
   
   output$mymap <- renderLeaflet({
-    leaflet() %>%
+    leaflet(data = select.data()) %>%
       addProviderTiles(providers$Stamen.TonerLite,
                        options = providerTileOptions(noWrap = TRUE)
       ) %>%
-      addMarkers(data = select.data())
+      addMarkers(~lng,~lat,label = ~sprintf("價格:%s 面積:%s 屋齡:%s",PRICE, total_size, house_age))
   })
   
 }

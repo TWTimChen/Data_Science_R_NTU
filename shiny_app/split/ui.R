@@ -42,15 +42,15 @@ fluidPage(
                           ),
                           
                           sliderInput("slide.age", h3("屋齡:"),  
-                                      min = 0, max = 120, value = c(40, 80)),
+                                      min = 0, max = 120, value = c(0, 80)),
                           
                           sliderInput("slide.area.size", h3("面積(平方公尺):"),  
-                                      min = 0, max = 100, value = c(40, 80)),
+                                      min = 0, max = 100, value = c(0, 80)),
                           
                           h3("租金範圍:"),
                           fluidRow(
                             column(6, numericInput("slide.low.price", h4("最低:"), value = 1)),
-                            column(6, numericInput("slide.high.price", h4("最高:"), value = 50))
+                            column(6, numericInput("slide.high.price", h4("最高:"), value = 100000))
                           ),
                           
                           fluidRow(
