@@ -10,9 +10,6 @@ taipei.house.feature <- list("辦公商業大樓" = 1,"廠辦" = 2,"店面(店�
                              "華廈(10層含以下有電梯)" = 6,"其他" = 7,"套房(1房1廳1衛)" = 7,"透天厝" = 9,"住宅大樓(11層含以上有電梯)" = 10) 
 taipei.house.usage <- list("住" = 1,"商" = 2,"工" = 3,"住商" = 4,"住工" = 5)
 
-fields <- c("region", "usage", "land", "building", "car_park", "select.function", "low_age", "high_age", "low_area", "high_area", "low_price", "high_price")
-
-
 fluidPage(
   # start UI
   titlePanel("房價查詢、預估平台"),

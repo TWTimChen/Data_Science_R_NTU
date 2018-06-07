@@ -3,14 +3,54 @@ mrt.data <- read.table("../final_dataset/MRT_station_data.csv")
 bus.station.data <- read.table("../final_dataset/bus_station_data.csv")
 park.data <- read.table("../final_dataset/park.final.csv")
 store.data <- read.table("../final_dataset/store_all.csv")
+fields <- c("region", "usage", "land", "building", "car_park", "select.function", "low_age", "high_age", "low_area", "high_area", "low_price", "high_price")
 
-# map <- leaflet() %>%
-#   addProviderTiles(providers$Stamen.TonerLite,
-#                    options = providerTileOptions(noWrap = TRUE)) %>% 
-#   addMarkers(lat = mrt.data$lat, lng = mrt.data$lng, popup = mrt.data$station_name)
+map <- leaflet() %>%
+  addProviderTiles(providers$Stamen.TonerLite,
+                   options = providerTileOptions(noWrap = TRUE)) %>% 
+  addMarkers(lat = mrt.data$lat, lng = mrt.data$lng, popup = mrt.data$station_name)
+
+outputDir <- "../responses"
+saveData <- function(data) {
+  data <- as.data.frame(t(data))
+  if (exists("../responses")) {
+    responses <<- rbind(responses, data)
+    # Create a unique file name
+    fileName <- "user_inputs.csv"
+    write.csv(
+      x = responses,
+      file = file.path(outputDir, fileName), 
+      row.names = FALSE, quote = TRUE
+    )
+  } else {
+    responses <<- data
+    fileName <- "user_inputs.csv"
+    write.csv(
+      x = responses,
+      file = file.path(outputDir, fileName), 
+      row.names = FALSE, quote = TRUE
+    )
+  }
+}
+
+loadData <- function() {
+  if (exists("../responses")) {
+    responses
+  }
+}
 
 
 function(input, output, session) {
+  
+  # Return the requested dataset ----
+  # By declaring datasetInput as a reactive expression we ensure
+  # that:
+  #
+  # 1. It is only called when the inputs it depends on changes
+  # 2. The computation and result are shared by all the callers,
+  #    i.e. it only executes a single time
+  #convenient.store <- read.csv("")
+  
   # Whenever a field is filled, aggregate all form data
   fromData <- reactive({
     data <- sapply(fields, function(x) input[[x]])
@@ -69,7 +109,7 @@ function(input, output, session) {
       addProviderTiles(providers$Stamen.TonerLite,
                        options = providerTileOptions(noWrap = TRUE)) %>%
       addMarkers(data = select.data())
-    }
+  }
   )
   
   observeEvent(input$mrt, {
@@ -86,35 +126,3 @@ function(input, output, session) {
     }
   }, ignoreNULL = FALSE)
 }
-
-
-outputDir <- "../responses"
-saveData <- function(data) {
-  data <- as.data.frame(t(data))
-  if (exists("../responses")) {
-    responses <<- rbind(responses, data)
-    # Create a unique file name
-    fileName <- "user_inputs.csv"
-    write.csv(
-      x = responses,
-      file = file.path(outputDir, fileName), 
-      row.names = FALSE, quote = TRUE
-    )
-  } else {
-    responses <<- data
-    fileName <- "user_inputs.csv"
-    write.csv(
-      x = responses,
-      file = file.path(outputDir, fileName), 
-      row.names = FALSE, quote = TRUE
-    )
-  }
-}
-
-loadData <- function() {
-  if (exists("../responses")) {
-    responses
-  }
-}
-
-#shinyApp(ui, server)
