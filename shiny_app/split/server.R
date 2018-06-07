@@ -21,13 +21,9 @@ function(input, output, session) {
                                                             build_state == input$select.function,
                                                             house_age %in% input$slide.age[1]:input$slide.age[2],
                                                             total_size >= input$slide.area.size[1] & total_size <= input$slide.area.size[2],
-<<<<<<< HEAD
                                                             PRICE >= input$slide.low.price & PRICE <= input$slide.high.price) %>% 
                                    select(lat,lng,PRICE,total_size,house_age)
-=======
-                                                            PRICE >= input$slide.low.price & PRICE <= input$slide.high.price) %>%
-                                   select(lat,lng)
->>>>>>> 66faa7ab242c307cf129c02736a3ea8f38e98b1b
+
   })
   
  
