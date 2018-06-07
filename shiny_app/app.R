@@ -4,9 +4,14 @@ r_colors <- rgb(t(col2rgb(colors()) / 255))
 names(r_colors) <- colors()
 
 # variable
-taipei.region <- c("中正區", "大同區", "中山區", "松山區", "大安區", "萬華區", "信義區", "士林區", "北投區", "內湖區", "南港區", "文山區")
-taipei.house.feature <- c("辦公商業大樓","廠辦","店面(店鋪)","工廠","公寓(5樓含以下無電梯)","華廈(10層含以下有電梯)","其他","套房(1房1廳1衛)","透天厝","住宅大樓(11層含以上有電梯)")
-taipei.house.usage <- c("住","商","工","住商","住工")
+taipei.region <- list("中正區" = 12, "大同區" = 3, "中山區" = 11, "松山區" = 7, "大安區" = 2, "萬華區" = 8,
+                      "信義區" = 10, "士林區" = 6, "北投區" = 1, "內湖區" = 5, "南港區" = 4, "文山區" = 9)
+taipei.house.feature <- list("辦公商業大樓" = 1,"廠辦" = 2,"店面(店鋪)" = 3,"工廠" = 4,"公寓(5樓含以下無電梯)" = 5,
+                             "華廈(10層含以下有電梯)" = 6,"其他" = 7,"套房(1房1廳1衛)" = 7,"透天厝" = 9,"住宅大樓(11層含以上有電梯)" = 10) 
+taipei.house.usage <- list("住" = 1,"商" = 2,"工" = 3,"住商" = 4,"住工" = 5)
+
+fields <- c("region", "usage", "land", "building", "car_park", "select.function", "low_age", "high_age", "low_area", "high_area", "low_price", "high_price")
+
 
 ui <- fluidPage(
   # start UI
@@ -16,41 +21,47 @@ ui <- fluidPage(
                       sidebarLayout(
                         # Sidebar panel for inputs ----
                         sidebarPanel(
-                          selectInput("select.region",
+                          selectInput("region",
                                       h3("選擇地區:"),
                                       choices = taipei.region),
-                          selectInput("select.usage",
+                          selectInput("usage",
                                       h3("租屋用途:"),
                                       choices = taipei.house.usage),
                           h3("房子特徵:"),
                           fluidRow(
-                            column(6, align="center", radioButtons("radio.land", h4("土地"),
-                                                                   choices = list("是" = 1, "否" = 2),
-                                                                   selected = 1)),
-                            column(6, align="center",  radioButtons("radio.building", h4("建物"),
-                                                                    choices = list("是" = 1, "否" = 2),
-                                                                    selected = 1)),
-                            column(6, align="center",radioButtons("radio.car.park", h4("車位"),
-                                                                  choices = list("是" = 1, "否" = 2),
-                                                                  selected = 1)),
+                            column(6, align="center", radioButtons("land", h4("土地"),
+                                                                   choices = list("是" = T, "否" = F),
+                                                                   selected = F)),
+                            column(6, align="center",  radioButtons("building", h4("建物"),
+                                                                    choices = list("是" = T, "否" = F),
+                                                                    selected = T)),
+                            column(6, align="center",radioButtons("car_park", h4("車位"),
+                                                                  choices = list("是" = T, "否" = F),
+                                                                  selected = F)),
                             column(6, align="center", selectInput("select.function", h4("型態"),
                                                                   choices = taipei.house.feature))
                           ),
                           
-                          sliderInput("slide.age", h3("屋齡:"),  
-                                      min = 0, max = 120, value = c(40, 80)),
-                          
-                          sliderInput("slide.area.size", h3("面積(平方公尺):"),  
-                                      min = 0, max = 100, value = c(40, 80)),
-                          
-                          h3("租金範圍:"),
+                          h3("屋齡:"),
                           fluidRow(
-                            column(6, numericInput("slide.low.price", h4("最低:"), value = 1)),
-                            column(6, numericInput("slide.high.price", h4("最高:"), value = 50))
+                            column(6, numericInput("low_age", h4("最低:"), value = 0)),
+                            column(6, numericInput("high_age", h4("最高:"), value = 100))
+                          ),
+                          
+                          h3("面積(平方公尺):"),
+                          fluidRow(
+                            column(6, numericInput("low_area", h4("最低:"), value = 1)),
+                            column(6, numericInput("high_area", h4("最高:"), value = 100))
+                          ),
+                          
+                          h3("租金範圍(萬):"),
+                          fluidRow(
+                            column(6, numericInput("low_price", h4("最低:"), value = 1)),
+                            column(6, numericInput("high_price", h4("最高:"), value = 100000))
                           ),
                           
                           fluidRow(
-                            column(11, align="center", actionButton("recalc", "確認"))
+                            column(11, align="center", actionButton("submit", "確認"))
                           )
                           #selectInput("select.age",
                           #            h3("屋齡:"),
@@ -67,18 +78,24 @@ ui <- fluidPage(
                           
                           # Output: HTML table with requested number of observations ----
                           #tableOutput("view"),
-                          checkboxGroupInput("checkGroup.facility", h4("附近設施"),
-                                             choices = list("捷運站" = 1, 
-                                                            "公車站" = 2, 
-                                                            "便利商店" = 3,
-                                                            "公園" = 4),
-                                             selected = 1,
-                                             inlin = TRUE),
+                          column(3, 
+                                 checkboxInput("mrt", "捷運站", value = FALSE)
+                          ),
+                          column(3, 
+                                 checkboxInput("bus", "公車站", value = FALSE)
+                          ),
+                          column(3, 
+                                 checkboxInput("store", "便利商店", value = FALSE)
+                          ),
+                          column(3, 
+                                 checkboxInput("park", "公園", value = FALSE)
+                          ),
                           #textOutput("select.region_output"),
                           #verbatimTextOutput("summary"),
                           leafletOutput("mymap", width = "100%", height = 450),
                           p(),
-                          actionButton("recalc", "New points")
+
+                          DT::dataTableOutput("responses", width = 300), tags$hr()
                         )
                       )
              ),
@@ -93,6 +110,17 @@ ui <- fluidPage(
   )
 )
 
+real.estate.data <- read.csv("real_estate_ready.CSV")
+mrt.data <- read.table("final_dataset/MRT_station_data.csv")
+bus.station.data <- read.table("final_dataset/bus_station_data.csv")
+park.data <- read.table("final_dataset/park.final.csv")
+store.data <- read.table("final_dataset/store_all.csv")
+
+map <- leaflet() %>%
+  addProviderTiles(providers$Stamen.TonerLite,
+                   options = providerTileOptions(noWrap = TRUE)) %>% 
+  addMarkers(lat = mrt.data$lat, lng = mrt.data$lng, popup = mrt.data$station_name)
+
 
 server <- function(input, output, session) {
   
@@ -103,22 +131,25 @@ server <- function(input, output, session) {
   # 1. It is only called when the inputs it depends on changes
   # 2. The computation and result are shared by all the callers,
   #    i.e. it only executes a single time
-  real.estate.data <- read.csv("real_estate_ready.CSV")
   #convenient.store <- read.csv("")
   
-  datasetInput <- reactive({
-    switch(input)
+  # Whenever a field is filled, aggregate all form data
+  fromData <- reactive({
+    data <- sapply(fields, function(x) input[[x]])
+    data
   })
   
-  output$summary <- renderPrint({
-    dataset <- real_estate_ready
-    summary(dataset)
-  })
-  #get.data <- c(
-  a <- reactive({
-    a <- input$select.region
+  # When the Submit button is clicked, save the form data
+  observeEvent(input$submit, {
+    saveData(fromData())
   })
   
+  # show the previous response
+  output$responses <- DT::renderDataTable({
+    input$submit
+    loadData()
+  })
+
   #output$select.region_output <- renderPrint({a()})
   
   #b <- input$select.usage 
@@ -133,59 +164,79 @@ server <- function(input, output, session) {
   #k <- input$checkGroup.facility
   #l<- input$checkGroup.facility
   
-  datasetInput <- reactive({
-    switch(input$dataset,
-           "rock" = real.estate.data$section,
-           "pressure" = real.estate.data$address,
-           "cars" = cars)
-  })
+#  filteredData <- reactive({
+#    real.estate.data
+    
+#    real.estate.data$is.land == input$land
+#    real.estate.data$is.building = real.estate.data$n_build > 0
+#    real.estate.data$is.park = real.estate.data$n_park > 0
+#  })
   
-  # Create caption ----
-  # The output$caption is computed based on a reactive expression
-  # that returns input$caption. When the user changes the
-  # "caption" field:
-  #
-  # 1. This function is automatically called to recompute the output
-  # 2. New caption is pushed back to the browser for re-display
-  #
-  # Note that because the data-oriented reactive expressions
-  # below don't depend on input$caption, those expressions are
-  # NOT called when input$caption changes
-  output$caption <- renderText({
-    input$caption
-  })
+  select.data <- eventReactive(input$submit,
+                               {real.estate.data %>% filter(district_id == input$region,
+                                                            use == input$usage,
+                                                            is.land == input$land,
+                                                            is.building == input$building,
+                                                            is.park == input$car_park,
+                                                            build_state == input$select.function,
+                                                            house_age %in% input$low_age:input$high_age,
+                                                            total_size >= input$low_area & total_size <= input$high_area,
+                                                            PRICE >= input$low_price & PRICE <= input$high_price) %>% 
+                                   select(lat,lng)
+                               })
   
-  # Generate a summary of the dataset ----
-  # The output$summary depends on the datasetInput reactive
-  # expression, so will be re-executed whenever datasetInput is
-  # invalidated, i.e. whenever the input$dataset changes
-  output$summary <- renderPrint({
-    dataset <- datasetInput()
-    summary(dataset)
-  })
-  
-  # Show the first "n" observations ----
-  # The output$view depends on both the databaseInput reactive
-  # expression and input$obs, so it will be re-executed whenever
-  # input$dataset or input$obs is changed
-  output$view <- renderTable({
-    head(datasetInput(), n = input$obs)
-  })
-  
-  
-  
-  points <- eventReactive(input$recalc, {
-    cbind(rnorm(40) * 2 + 13, rnorm(40) + 48)
-  }, ignoreNULL = FALSE)
   
   output$mymap <- renderLeaflet({
     leaflet() %>%
       addProviderTiles(providers$Stamen.TonerLite,
-                       options = providerTileOptions(noWrap = TRUE)
-      ) %>%
-      addMarkers(data = points())
-  })
+                       options = providerTileOptions(noWrap = TRUE)) %>%
+      addMarkers(data = select.data())
+    }
+  )
   
+  observeEvent(input$mrt, {
+    proxy <- leafletProxy("mymap", session)
+    #proxy %>% addMarkers(lat = mrt.data$lat, lng = mrt.data$lng, popup = mrt.data$station_name)
+    if (!isTRUE(input$mrt)){
+    # proxy %>% addMarkers(lat = mrt.data$lat, lng = mrt.data$lng, popup = mrt.data$station_name)
+      #proxy %>% removeMarker()
+    } else {
+      proxy %>% addMarkers(data = cbind(mrt.data$lat, lng = mrt.data$lng), popup = mrt.data$station_name)
+      #proxy %>% removeMarker()
+    #  #mrt.points <- cbind(mrt.data$lat, mrt.data$lng)
+    #  proxy %>% addMarkers(lat = mrt.data$lat, lng = mrt.data$lng, popup = mrt.data$station_name)
+    }
+  }, ignoreNULL = FALSE)
+}
+
+
+outputDir <- "responses"
+saveData <- function(data) {
+  data <- as.data.frame(t(data))
+  if (exists("responses")) {
+    responses <<- rbind(responses, data)
+    # Create a unique file name
+    fileName <- "user_inputs.csv"
+    write.csv(
+      x = responses,
+      file = file.path(outputDir, fileName), 
+      row.names = FALSE, quote = TRUE
+    )
+  } else {
+    responses <<- data
+    fileName <- "user_inputs.csv"
+    write.csv(
+      x = responses,
+      file = file.path(outputDir, fileName), 
+      row.names = FALSE, quote = TRUE
+    )
+  }
+}
+
+loadData <- function() {
+  if (exists("responses")) {
+    responses
+  }
 }
 
 shinyApp(ui, server)

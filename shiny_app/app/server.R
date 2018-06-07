@@ -1,0 +1,120 @@
+real.estate.data <- read.csv("../real_estate_ready.CSV")
+mrt.data <- read.table("../final_dataset/MRT_station_data.csv")
+bus.station.data <- read.table("../final_dataset/bus_station_data.csv")
+park.data <- read.table("../final_dataset/park.final.csv")
+store.data <- read.table("../final_dataset/store_all.csv")
+
+# map <- leaflet() %>%
+#   addProviderTiles(providers$Stamen.TonerLite,
+#                    options = providerTileOptions(noWrap = TRUE)) %>% 
+#   addMarkers(lat = mrt.data$lat, lng = mrt.data$lng, popup = mrt.data$station_name)
+
+
+function(input, output, session) {
+  # Whenever a field is filled, aggregate all form data
+  fromData <- reactive({
+    data <- sapply(fields, function(x) input[[x]])
+    data
+  })
+  
+  # When the Submit button is clicked, save the form data
+  observeEvent(input$submit, {
+    saveData(fromData())
+  })
+  
+  # show the previous response
+  output$responses <- DT::renderDataTable({
+    input$submit
+    loadData()
+  })
+  
+  #output$select.region_output <- renderPrint({a()})
+  
+  #b <- input$select.usage 
+  #c <- input$radio.land
+  #d <- input$radio.building
+  #e <- input$radio.car.park
+  #f <- input$select.function
+  #g <- input$slide.age
+  #h <- input$slide.area.size
+  #i <- input$slide.low.price
+  #j <- input$slide.high.price
+  #k <- input$checkGroup.facility
+  #l<- input$checkGroup.facility
+  
+  #  filteredData <- reactive({
+  #    real.estate.data
+  
+  #    real.estate.data$is.land == input$land
+  #    real.estate.data$is.building = real.estate.data$n_build > 0
+  #    real.estate.data$is.park = real.estate.data$n_park > 0
+  #  })
+  
+  select.data <- eventReactive(input$submit,
+                               {real.estate.data %>% filter(district_id == input$region,
+                                                            use == input$usage,
+                                                            is.land == input$land,
+                                                            is.building == input$building,
+                                                            is.park == input$car_park,
+                                                            build_state == input$select.function,
+                                                            house_age %in% input$low_age:input$high_age,
+                                                            total_size >= input$low_area & total_size <= input$high_area,
+                                                            PRICE >= input$low_price & PRICE <= input$high_price) %>% 
+                                   select(lat,lng)
+                               })
+  
+  
+  output$mymap <- renderLeaflet({
+    leaflet() %>%
+      addProviderTiles(providers$Stamen.TonerLite,
+                       options = providerTileOptions(noWrap = TRUE)) %>%
+      addMarkers(data = select.data())
+    }
+  )
+  
+  observeEvent(input$mrt, {
+    proxy <- leafletProxy("mymap", session)
+    #proxy %>% addMarkers(lat = mrt.data$lat, lng = mrt.data$lng, popup = mrt.data$station_name)
+    if (!isTRUE(input$mrt)){
+      # proxy %>% addMarkers(lat = mrt.data$lat, lng = mrt.data$lng, popup = mrt.data$station_name)
+      #proxy %>% removeMarker()
+    } else {
+      proxy %>% addMarkers(data = cbind(mrt.data$lat, lng = mrt.data$lng), popup = mrt.data$station_name)
+      #proxy %>% removeMarker()
+      #  #mrt.points <- cbind(mrt.data$lat, mrt.data$lng)
+      #  proxy %>% addMarkers(lat = mrt.data$lat, lng = mrt.data$lng, popup = mrt.data$station_name)
+    }
+  }, ignoreNULL = FALSE)
+}
+
+
+outputDir <- "../responses"
+saveData <- function(data) {
+  data <- as.data.frame(t(data))
+  if (exists("../responses")) {
+    responses <<- rbind(responses, data)
+    # Create a unique file name
+    fileName <- "user_inputs.csv"
+    write.csv(
+      x = responses,
+      file = file.path(outputDir, fileName), 
+      row.names = FALSE, quote = TRUE
+    )
+  } else {
+    responses <<- data
+    fileName <- "user_inputs.csv"
+    write.csv(
+      x = responses,
+      file = file.path(outputDir, fileName), 
+      row.names = FALSE, quote = TRUE
+    )
+  }
+}
+
+loadData <- function() {
+  if (exists("../responses")) {
+    responses
+  }
+}
+
+#shinyApp(ui, server)
