@@ -5,10 +5,6 @@ park.data <- read.table("../final_dataset/park.final.csv")
 store.data <- read.table("../final_dataset/store_all.csv")
 fields <- c("region", "usage", "land", "building", "car_park", "select.function", "low_age", "high_age", "low_area", "high_area", "low_price", "high_price")
 
-map <- leaflet() %>%
-  addProviderTiles(providers$Stamen.TonerLite,
-                   options = providerTileOptions(noWrap = TRUE)) %>% 
-  addMarkers(lat = mrt.data$lat, lng = mrt.data$lng, popup = mrt.data$station_name)
 
 outputDir <- "../responses"
 saveData <- function(data) {
@@ -117,9 +113,9 @@ function(input, output, session) {
     #proxy %>% addMarkers(lat = mrt.data$lat, lng = mrt.data$lng, popup = mrt.data$station_name)
     if (!isTRUE(input$mrt)){
       # proxy %>% addMarkers(lat = mrt.data$lat, lng = mrt.data$lng, popup = mrt.data$station_name)
-      #proxy %>% removeMarker()
+      proxy %>% removeMarker(mrt.data$station_name)
     } else {
-      proxy %>% addMarkers(data = cbind(mrt.data$lat, lng = mrt.data$lng), popup = mrt.data$station_name)
+      proxy %>% addMarkers(data = cbind(mrt.data$lat, lng = mrt.data$lng), layerId = mrt.data$station_name, popup = mrt.data$station_name)
       #proxy %>% removeMarker()
       #  #mrt.points <- cbind(mrt.data$lat, mrt.data$lng)
       #  proxy %>% addMarkers(lat = mrt.data$lat, lng = mrt.data$lng, popup = mrt.data$station_name)
