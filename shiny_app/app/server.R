@@ -9,7 +9,7 @@ fields <- c("region", "usage", "land", "building", "car_park", "select.function"
 outputDir <- "../responses"
 saveData <- function(data) {
   data <- as.data.frame(t(data))
-  if (exists("../responses")) {
+  if (exists("responses")) {
     responses <<- rbind(responses, data)
     # Create a unique file name
     fileName <- "user_inputs.csv"
@@ -30,7 +30,7 @@ saveData <- function(data) {
 }
 
 loadData <- function() {
-  if (exists("../responses")) {
+  if (exists("responses")) {
     responses
   }
 }
@@ -106,19 +106,43 @@ function(input, output, session) {
                        options = providerTileOptions(noWrap = TRUE)) %>%
       addMarkers(data = select.data())
   }
-  )
+  )  
   
   observeEvent(input$mrt, {
     proxy <- leafletProxy("mymap", session)
-    #proxy %>% addMarkers(lat = mrt.data$lat, lng = mrt.data$lng, popup = mrt.data$station_name)
     if (!isTRUE(input$mrt)){
-      # proxy %>% addMarkers(lat = mrt.data$lat, lng = mrt.data$lng, popup = mrt.data$station_name)
       proxy %>% removeMarker(mrt.data$station_name)
     } else {
       proxy %>% addMarkers(data = cbind(mrt.data$lat, lng = mrt.data$lng), layerId = mrt.data$station_name, popup = mrt.data$station_name)
-      #proxy %>% removeMarker()
-      #  #mrt.points <- cbind(mrt.data$lat, mrt.data$lng)
-      #  proxy %>% addMarkers(lat = mrt.data$lat, lng = mrt.data$lng, popup = mrt.data$station_name)
     }
   }, ignoreNULL = FALSE)
+  
+  observeEvent(input$park, {
+    proxy <- leafletProxy("mymap", session)
+    if (!isTRUE(input$park)){
+      proxy %>% removeMarker(park.data$Name)
+    } else {
+      proxy %>% addMarkers(data = cbind(park.data$Longitude, lng = park.data$Latitude), layerId = park.data$Name, popup = park.data$Name)
+    }
+  }, ignoreNULL = FALSE)
+  
+  
+  observeEvent(input$bus, {
+    proxy <- leafletProxy("mymap", session)
+    if (!isTRUE(input$bus)){
+      proxy %>% removeMarker(bus.station.data$nameZh)
+    } else {
+      proxy %>% addMarkers(data = cbind(bus.station.data$longitude, lng = bus.station.data$latitude), layerId = bus.station.data$nameZh, popup = bus.station.data$nameZh)
+    }
+  }, ignoreNULL = FALSE)
+
+  observeEvent(input$store, {
+    proxy <- leafletProxy("mymap", session)
+    if (!isTRUE(input$store)){
+      proxy %>% removeMarker(as.character(store.data$lng))
+    } else {
+      proxy %>% addMarkers(data = cbind(store.data$lng, lng = store.data$lat), layerId = as.character(store.data$lng))
+    }
+  }, ignoreNULL = FALSE)
+  
 }
