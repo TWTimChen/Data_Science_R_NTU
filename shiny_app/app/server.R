@@ -99,13 +99,37 @@ function(input, output, session) {
                                    select(lat,lng)
                                })
   
+  houseLeafIcon <- makeIcon(
+    iconUrl = "../images/house-xxl.png",
+    iconWidth = 38, iconHeight = 38
+  )
+  
+  mrtLeafIcon <- makeIcon(
+    iconUrl = "../images/mrt.png",
+    iconWidth = 38, iconHeight = 38
+  )
+  
+  busLeafIcon <- makeIcon(
+    iconUrl = "../images/bus.png",
+    iconWidth = 38, iconHeight = 38
+  )
+  
+  parkLeafIcon <- makeIcon(
+    iconUrl = "../images/park.png",
+    iconWidth = 38, iconHeight = 38
+  )
+  
+  storeLeafIcon <- makeIcon(
+    iconUrl = "../images/store.png",
+    iconWidth = 38, iconHeight = 38
+  )
   
   output$mymap <- renderLeaflet({
     leaflet() %>%
-      addProviderTiles(providers$Stamen.TonerLite,
+      addProviderTiles(providers$OpenStreetMap.Mapnik,
                        options = providerTileOptions(noWrap = TRUE)) %>%
-      addMarkers(data = select.data())
-  }
+      addMarkers(data = select.data(), icon = houseLeafIcon)
+    }
   )  
   
   observeEvent(input$mrt, {
@@ -113,7 +137,7 @@ function(input, output, session) {
     if (!isTRUE(input$mrt)){
       proxy %>% removeMarker(mrt.data$station_name)
     } else {
-      proxy %>% addMarkers(data = cbind(mrt.data$lat, lng = mrt.data$lng), layerId = mrt.data$station_name, popup = mrt.data$station_name)
+      proxy %>% addMarkers(data = cbind(mrt.data$lat, lng = mrt.data$lng), layerId = mrt.data$station_name, popup = mrt.data$station_name, icon = mrtLeafIcon, clusterOptions = markerClusterOptions())
     }
   }, ignoreNULL = FALSE)
   
@@ -122,7 +146,7 @@ function(input, output, session) {
     if (!isTRUE(input$park)){
       proxy %>% removeMarker(park.data$Name)
     } else {
-      proxy %>% addMarkers(data = cbind(park.data$Longitude, lng = park.data$Latitude), layerId = park.data$Name, popup = park.data$Name)
+      proxy %>% addMarkers(data = cbind(park.data$Longitude, lng = park.data$Latitude), layerId = park.data$Name, popup = park.data$Name, icon = parkLeafIcon, clusterOptions = markerClusterOptions())
     }
   }, ignoreNULL = FALSE)
   
@@ -132,7 +156,7 @@ function(input, output, session) {
     if (!isTRUE(input$bus)){
       proxy %>% removeMarker(bus.station.data$nameZh)
     } else {
-      proxy %>% addMarkers(data = cbind(bus.station.data$longitude, lng = bus.station.data$latitude), layerId = bus.station.data$nameZh, popup = bus.station.data$nameZh)
+      proxy %>% addMarkers(data = cbind(bus.station.data$longitude, lng = bus.station.data$latitude), layerId = bus.station.data$nameZh, popup = bus.station.data$nameZh, icon = busLeafIcon, clusterOptions = markerClusterOptions())
     }
   }, ignoreNULL = FALSE)
 
@@ -141,7 +165,7 @@ function(input, output, session) {
     if (!isTRUE(input$store)){
       proxy %>% removeMarker(as.character(store.data$lng))
     } else {
-      proxy %>% addMarkers(data = cbind(store.data$lng, lng = store.data$lat), layerId = as.character(store.data$lng))
+      proxy %>% addMarkers(data = cbind(store.data$lng, lng = store.data$lat), layerId = as.character(store.data$lng), icon = storeLeafIcon, clusterOptions = markerClusterOptions())
     }
   }, ignoreNULL = FALSE)
   
