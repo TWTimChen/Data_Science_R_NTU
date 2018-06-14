@@ -1,5 +1,6 @@
 library(magrittr)
 library(tidyverse)
+library(htmltools)
 
 function(input, output, session) {
   
@@ -37,7 +38,9 @@ function(input, output, session) {
       addProviderTiles(providers$Stamen.TonerLite,
                        options = providerTileOptions(noWrap = TRUE)
       ) %>%
-      addMarkers(~lng,~lat,label = ~sprintf("價格:%s 面積:%s 屋齡:%s",PRICE, total_size, house_age))
+      addMarkers(~lng,~lat,
+                 label = ~{sprintf("價格:%s<br/>面積:%s<br/>屋齡:%s",PRICE, total_size, house_age) %>% 
+                     lapply(htmltools::HTML)})
   })
   
 }
