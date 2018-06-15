@@ -1,3 +1,6 @@
+library(magrittr)
+library(tidyverse)
+
 real.estate.data <- read.csv("../real_estate_ready.CSV")
 mrt.data <- read.table("../final_dataset/MRT_station_data.csv")
 bus.station.data <- read.table("../final_dataset/bus_station_data.csv")
@@ -64,27 +67,8 @@ function(input, output, session) {
     loadData()
   })
   
-  #output$select.region_output <- renderPrint({a()})
-  
-  #b <- input$select.usage 
-  #c <- input$radio.land
-  #d <- input$radio.building
-  #e <- input$radio.car.park
-  #f <- input$select.function
-  #g <- input$slide.age
-  #h <- input$slide.area.size
-  #i <- input$slide.low.price
-  #j <- input$slide.high.price
-  #k <- input$checkGroup.facility
-  #l<- input$checkGroup.facility
-  
-  #  filteredData <- reactive({
-  #    real.estate.data
-  
-  #    real.estate.data$is.land == input$land
-  #    real.estate.data$is.building = real.estate.data$n_build > 0
-  #    real.estate.data$is.park = real.estate.data$n_park > 0
-  #  })
+  #######################################################
+  ################ History Finding ######################
   
   select.data <- eventReactive(input$submit,
                                {real.estate.data %>% filter(district_id == input$region,
@@ -169,4 +153,29 @@ function(input, output, session) {
     }
   }, ignoreNULL = FALSE)
   
+  ########################################################
+  ################### Prediction #########################
+
+  output$premap <- renderLeaflet({
+    leaflet() %>%
+      addProviderTiles(providers$Stamen.TonerLite,
+                       options = providerTileOptions(noWrap = TRUE)) %>%
+      addMarkers(data = {cbind(rnorm(10) * .003 + 121.55, rnorm(10) * .003 + 25.05)}
+      )
+  })
+  
+  cursor <- reactive(
+    sprintf("lat%.3f  lng%.3f", input$premap_click[1], input$premap_click[2])
+  )
+  
+  output$cursor <- renderText(cursor())
+  
 }
+
+
+
+
+
+
+
+

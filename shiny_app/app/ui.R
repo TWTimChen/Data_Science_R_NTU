@@ -97,7 +97,29 @@ fluidPage(
                       )
              ),
              tabPanel("預測租屋價查詢",
-                      verbatimTextOutput("summary")
+                      sidebarLayout(
+                        sidebarPanel(
+                          selectInput("pre_region",
+                                      h4("選擇地區:"),
+                                      choices = taipei.region),
+                          selectInput("pre_usage",
+                                      h4("租屋用途:"),
+                                      choices = taipei.house.usage),
+                          numericInput("pre_area", h4("面積(平方公尺):"), 50),
+                          numericInput("pre_age", h4("屋齡:"), 10),
+                          selectInput("pre_type", h4("房屋型態"), choices = taipei.house.feature)
+                        ),
+                        mainPanel(
+                          wellPanel(fluidRow(
+                            column(1),
+                            column(3, h4("預測價格:")),
+                            column(6, h4(textOutput("cursor"))),
+                            column(2, actionButton("pre_submit", "預測"))
+                          )),
+                          leafletOutput("premap", width = "100%", height =400),
+                          br()
+                        )
+                      )
              ),
              navbarMenu("More",
                         tabPanel("Table",
@@ -106,3 +128,14 @@ fluidPage(
              )
   )
 )
+
+
+
+
+
+
+
+
+
+
+
