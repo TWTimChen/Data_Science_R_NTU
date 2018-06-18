@@ -75,18 +75,6 @@ fluidPage(
                           
                           # Output: HTML table with requested number of observations ----
                           #tableOutput("view"),
-                          column(3, 
-                                 checkboxInput("mrt", "捷運站", value = FALSE)
-                          ),
-                          column(3, 
-                                 checkboxInput("bus", "公車站", value = FALSE)
-                          ),
-                          column(3, 
-                                 checkboxInput("store", "便利商店", value = FALSE)
-                          ),
-                          column(3, 
-                                 checkboxInput("park", "公園", value = FALSE)
-                          ),
                           #textOutput("select.region_output"),
                           #verbatimTextOutput("summary"),
                           leafletOutput("mymap", width = "100%", height = 450),
