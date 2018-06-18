@@ -1,15 +1,15 @@
 library(magrittr)
 library(tidyverse)
 
-real.estate.data <- read.csv("../real_estate_ready.CSV")
-mrt.data <- read.table("../final_dataset/MRT_station_data.csv")
-bus.station.data <- read.table("../final_dataset/bus_station_data.csv")
-park.data <- read.table("../final_dataset/park.final.csv")
-store.data <- read.table("../final_dataset/store_all.csv")
+real.estate.data <- read.csv("real_estate_ready.CSV")
+mrt.data <- read.table("final_dataset/MRT_station_data.csv")
+bus.station.data <- read.table("final_dataset/bus_station_data.csv")
+park.data <- read.table("final_dataset/park.final.csv")
+store.data <- read.table("final_dataset/store_all.csv")
 fields <- c("region", "usage", "land", "building", "car_park", "select.function", "low_age", "high_age", "low_area", "high_area", "low_price", "high_price")
 
 
-outputDir <- "../responses"
+outputDir <- "responses"
 saveData <- function(data) {
   data <- as.data.frame(t(data))
   if (exists("responses")) {
@@ -80,78 +80,99 @@ function(input, output, session) {
                                                             house_age %in% input$low_age:input$high_age,
                                                             total_size >= input$low_area & total_size <= input$high_area,
                                                             PRICE >= input$low_price & PRICE <= input$high_price) %>% 
-                                   select(lat,lng)
+                                   select(lat,lng,PRICE,total_size,house_age)
                                })
   
   houseLeafIcon <- makeIcon(
-    iconUrl = "../images/house-xxl.png",
+    iconUrl = "images/house-xxl.png",
     iconWidth = 38, iconHeight = 38
   )
   
   mrtLeafIcon <- makeIcon(
-    iconUrl = "../images/mrt.png",
+    iconUrl = "images/mrt.png",
     iconWidth = 38, iconHeight = 38
   )
   
   busLeafIcon <- makeIcon(
-    iconUrl = "../images/bus.png",
+    iconUrl = "images/bus.png",
     iconWidth = 38, iconHeight = 38
   )
   
   parkLeafIcon <- makeIcon(
-    iconUrl = "../images/park.png",
+    iconUrl = "images/park.png",
     iconWidth = 38, iconHeight = 38
   )
   
   storeLeafIcon <- makeIcon(
-    iconUrl = "../images/store.png",
+    iconUrl = "images/store.png",
     iconWidth = 38, iconHeight = 38
   )
   
   output$mymap <- renderLeaflet({
-    leaflet() %>%
+    leaflet(data = select.data()) %>%
       addProviderTiles(providers$OpenStreetMap.Mapnik,
                        options = providerTileOptions(noWrap = TRUE)) %>%
-      addMarkers(data = select.data(), icon = houseLeafIcon)
+      addMarkers(~lng,~lat, icon = houseLeafIcon,  label = ~{sprintf("價格:%s<br/>面積:%s<br/>屋齡:%s",PRICE, total_size, house_age) %>% 
+          lapply(htmltools::HTML)}) %>% 
+      addMarkers(group = "mrt.layer", data = cbind(mrt.data$lat, lng = mrt.data$lng), layerId = mrt.data$station_name, popup = mrt.data$station_name, icon = mrtLeafIcon, clusterOptions = markerClusterOptions()) %>%
+      addMarkers(group = "park.layer", data = cbind(park.data$Longitude, lng = park.data$Latitude), layerId = park.data$Name, popup = park.data$Name, icon = parkLeafIcon, clusterOptions = markerClusterOptions()) %>% 
+      addMarkers(group = "bus.layer", data = cbind(bus.station.data$longitude, lng = bus.station.data$latitude), layerId = bus.station.data$nameZh, popup = bus.station.data$nameZh, icon = busLeafIcon, clusterOptions = markerClusterOptions()) %>%
+      addMarkers(group = "store.layer", data = cbind(store.data$lng, lng = store.data$lat), layerId = as.character(store.data$lng), icon = storeLeafIcon, clusterOptions = markerClusterOptions()) %>%
+      addLayersControl(
+        overlayGroups = c("mrt.layer", "park.layer", "bus.layer", "store.layer"),
+        options = layersControlOptions(collapsed = FALSE)
+      ) %>% 
+      hideGroup("mrt.layer") %>%
+      hideGroup("park.layer") %>%
+      hideGroup("bus.layer") %>% 
+      hideGroup("store.layer")
     }
   )  
   
-  observeEvent(input$mrt, {
-    proxy <- leafletProxy("mymap", session)
-    if (!isTRUE(input$mrt)){
-      proxy %>% removeMarker(mrt.data$station_name)
-    } else {
-      proxy %>% addMarkers(data = cbind(mrt.data$lat, lng = mrt.data$lng), layerId = mrt.data$station_name, popup = mrt.data$station_name, icon = mrtLeafIcon, clusterOptions = markerClusterOptions())
-    }
-  }, ignoreNULL = FALSE)
-  
-  observeEvent(input$park, {
-    proxy <- leafletProxy("mymap", session)
-    if (!isTRUE(input$park)){
-      proxy %>% removeMarker(park.data$Name)
-    } else {
-      proxy %>% addMarkers(data = cbind(park.data$Longitude, lng = park.data$Latitude), layerId = park.data$Name, popup = park.data$Name, icon = parkLeafIcon, clusterOptions = markerClusterOptions())
-    }
-  }, ignoreNULL = FALSE)
-  
-  
-  observeEvent(input$bus, {
-    proxy <- leafletProxy("mymap", session)
-    if (!isTRUE(input$bus)){
-      proxy %>% removeMarker(bus.station.data$nameZh)
-    } else {
-      proxy %>% addMarkers(data = cbind(bus.station.data$longitude, lng = bus.station.data$latitude), layerId = bus.station.data$nameZh, popup = bus.station.data$nameZh, icon = busLeafIcon, clusterOptions = markerClusterOptions())
-    }
-  }, ignoreNULL = FALSE)
-
-  observeEvent(input$store, {
-    proxy <- leafletProxy("mymap", session)
-    if (!isTRUE(input$store)){
-      proxy %>% removeMarker(as.character(store.data$lng))
-    } else {
-      proxy %>% addMarkers(data = cbind(store.data$lng, lng = store.data$lat), layerId = as.character(store.data$lng), icon = storeLeafIcon, clusterOptions = markerClusterOptions())
-    }
-  }, ignoreNULL = FALSE)
+  # observeEvent(input$mrt, {
+  #   proxy <- leafletProxy("mymap", session)
+  #   if (!isTRUE(input$mrt)){
+  #     # proxy %>% removeMarker(layerId = mrt.data$station_name)
+  #     proxy%>% hideGroup("mrt.layer")
+  #   } else {
+  #     # proxy %>% addMarkers(group = "mrt.layer", data = cbind(mrt.data$lat, lng = mrt.data$lng), layerId = mrt.data$station_name, popup = mrt.data$station_name, icon = mrtLeafIcon, clusterOptions = markerClusterOptions())
+  #     proxy %>% showGroup("mrt.layer")
+  #   }
+  # }, ignoreNULL = FALSE)
+  # 
+  # observeEvent(input$park, {
+  #   proxy <- leafletProxy("mymap", session)
+  #   if (!isTRUE(input$park)){
+  #     # proxy %>% removeMarker(layerId = park.data$Name)
+  #     proxy%>% hideGroup("park.layer")
+  #   } else {
+  #     # proxy %>% addMarkers(group = "park.layer", data = cbind(park.data$Longitude, lng = park.data$Latitude), layerId = park.data$Name, popup = park.data$Name, icon = parkLeafIcon, clusterOptions = markerClusterOptions())
+  #     proxy %>% showGroup("park.layer")
+  #   }
+  # }, ignoreNULL = FALSE)
+  # 
+  # 
+  # observeEvent(input$bus, {
+  #   proxy <- leafletProxy("mymap", session)
+  #   if (!isTRUE(input$bus)){
+  #     # proxy %>% removeMarker(layerId = bus.station.data$nameZh)
+  #     proxy%>% hideGroup("bus.layer")
+  #   } else {
+  #     # proxy %>% addMarkers(group = "bus.layer", data = cbind(bus.station.data$longitude, lng = bus.station.data$latitude), layerId = bus.station.data$nameZh, popup = bus.station.data$nameZh, icon = busLeafIcon, clusterOptions = markerClusterOptions())
+  #     proxy %>% showGroup("bus.layer")
+  #   }
+  # }, ignoreNULL = FALSE)
+  # 
+  # observeEvent(input$store, {
+  #   proxy <- leafletProxy("mymap", session)
+  #   if (!isTRUE(input$store)){
+  #     # proxy %>% removeMarker(layerId = as.character(store.data$lng))
+  #     proxy %>% showGroup("store.layer")
+  #   } else {
+  #     # proxy %>% addMarkers(group = "store.layer", data = cbind(store.data$lng, lng = store.data$lat), layerId = as.character(store.data$lng), icon = storeLeafIcon, clusterOptions = markerClusterOptions())
+  #     proxy %>% showGroup("store.layer")
+  #   }
+  # }, ignoreNULL = FALSE)
   
   ########################################################
   ################### Prediction #########################
