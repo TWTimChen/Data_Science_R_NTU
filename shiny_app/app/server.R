@@ -154,6 +154,11 @@ function(input, output, session) {
     iconWidth = 38, iconHeight = 38
   )
   
+  predict.marker <- makeIcon(
+    iconUrl = "images/predict.png",
+    iconWidth = 38, iconHeight = 38
+  )
+  
   output$mymap <- renderLeaflet({
     leaflet(data = select.data()) %>%
       addProviderTiles(providers$OpenStreetMap.Mapnik,
@@ -225,11 +230,18 @@ function(input, output, session) {
 
   output$premap <- renderLeaflet({
     leaflet() %>%
-      addProviderTiles(providers$Stamen.TonerLite,
+      addProviderTiles(providers$OpenStreetMap.Mapnik,
                        options = providerTileOptions(noWrap = TRUE)) %>%
-      addMarkers(data = {cbind(rnorm(10) * .003 + 121.55, rnorm(10) * .003 + 25.05)}
+      addMarkers(data = {cbind(rnorm(1) * .003 + 121.537, rnorm(1) * .003 + 25.038)}, icon = predict.marker, layerId = "predict.marker.init"
       )
   })
+
+  # observeEvent(input$pre_submit, {
+  #   proxy <- leafletProxy("mymap", session)
+  #   proxy %>% removeMarker(layerId = "predict.marker")
+  #   # proxy %>% addMarkers(group = "mrt.layer", data = cbind(mrt.data$lat, lng = mrt.data$lng), layerId = mrt.data$station_name, popup = mrt.data$station_name, icon = mrtLeafIcon, clusterOptions = markerClusterOptions())
+  # }, ignoreNULL = FALSE)
+
   
   output$lng <- reactive(
     sprintf("經度:%.3f", input$premap_click[1])
@@ -241,13 +253,30 @@ function(input, output, session) {
   
   output$cursor <- renderText(cursor())
   
+  observeEvent(input$pre_submit,{
+    proxy2 <- leafletProxy("premap", session)
+    proxy2 %>% removeMarker(layerId = "predict.marker.init")
+    user.input <- read.csv("./responses/user_predict.csv")
+    # length(row.names(user.input))
+    user.input.last.row<- user.input[length(row.names(user.input)),]
+    lat <- user.input.last.row$lat
+    lng <- user.input.last.row$lng
+    cat("lat : ", lat, "lng : ", lng)
+    proxy2 %>% addMarkers(data = cbind(lat = lng, lng = lat), layerId = "predict.marker.init", icon = predict.marker)
+  })
+  
   price <- ""
   res <- eventReactive(input$pre_submit,{
+    path = "/Users/Kuan-Hao/anaconda3/envs/py36/bin/python"
+    use_python(path, required = FALSE)
+    cat(py_config()$version)
     setwd("./python_code/")
     source_python("predict.py")
     Sys.sleep(1)
     setwd("../")
     price <<- scan("responses/return.txt", what="character")
+    # proxy <- leafletProxy("mymap", session)
+    # proxy %>% removeMarker(layerId = "predict.marker")
   })
   output$pre_return <- renderText(res())
 }
