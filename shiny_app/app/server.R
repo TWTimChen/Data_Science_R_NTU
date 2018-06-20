@@ -7,7 +7,7 @@ bus.station.data <- read.table("final_dataset/bus_station_data.csv")
 park.data <- read.table("final_dataset/park.final.csv")
 store.data <- read.table("final_dataset/store_all.csv")
 fields_1 <- c("region", "usage", "land", "building", "car_park", "select.function", "low_age", "high_age", "low_area", "high_area", "low_price", "high_price")
-fields_2 <- c("pre_usage", "pre_area", "pre_age", "pre_type", "pre_n_room", "pre_n_hall", "pre_n_bath", "pre_is_comp", "pre_is_manage", "pre_is_furn")
+fields_2 <- c("pre_region", "pre_usage", "pre_area", "pre_age", "pre_type", "pre_n_room", "pre_n_hall", "pre_n_bath", "pre_is_comp", "pre_is_manage", "pre_is_furn")
 fileName_1 <- "user_search.csv"
 fileName_2 <- "user_predict.csv"
 

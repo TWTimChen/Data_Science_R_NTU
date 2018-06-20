@@ -87,9 +87,9 @@ fluidPage(
              tabPanel("預測租屋價查詢",
                       sidebarLayout(
                         sidebarPanel(
-                          # selectInput("pre_region",
-                          #             h4("選擇地點:"),
-                          #             choices = taipei.region),
+                          selectInput("pre_region",
+                                      h4("選擇區域:"),
+                                      choices = taipei.region),
                           h4("選擇地點:"),
                           wellPanel(style = "background-color: #ffffff;padding: 10px;",
                                     h4(textOutput("lng")),
