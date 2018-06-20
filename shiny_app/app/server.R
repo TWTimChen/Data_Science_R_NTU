@@ -17,7 +17,7 @@ outputDir <- "responses"
 saveData_1 <- function(data) {
   data <- as.data.frame(t(data))
   if (exists("responses_1")) {
-    responses_1 <<- rbind(responses, data)
+    responses_1 <<- rbind(responses_1, data)
     # Create a unique file name
     # fileName <- "user_inputs.csv"
     write.csv(
@@ -39,7 +39,7 @@ saveData_1 <- function(data) {
 saveData_2 <- function(data) {
   data <- as.data.frame(t(data))
   if (exists("responses_2")) {
-    responses_2 <<- rbind(responses, data)
+    responses_2 <<- rbind(responses_2, data)
     # Create a unique file name
     # fileName <- "user_inputs.csv"
     write.csv(
@@ -66,7 +66,7 @@ loadData_1 <- function() {
 
 loadData_2 <- function() {
   if (exists("responses_2")) {
-    responses_1
+    responses_2
   }
 }
 
@@ -89,7 +89,8 @@ function(input, output, session) {
   })
   
   fromData_2 <- reactive({
-    data <- sapply(fields_2, function(x) input[[x]])
+    data <- sapply(fields_2, function(x) input[[x]]) %>% 
+      c(lat = input$premap_click[[1]], lng = input$premap_click[[2]])
     data
   })
   

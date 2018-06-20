@@ -1,2 +1,3 @@
-"pre_usage","pre_area","pre_age","pre_type","pre_n_room","pre_n_hall","pre_n_bath","pre_is_comp","pre_is_manage","pre_is_furn"
-"1","50","10","1","1","1","1","FALSE","FALSE","FALSE"
+"pre_usage","pre_area","pre_age","pre_type","pre_n_room","pre_n_hall","pre_n_bath","pre_is_comp","pre_is_manage","pre_is_furn","lat","lng"
+"1","50","10","1","1","1","1","FALSE","FALSE","FALSE","25.0465698378947","121.538832226576"
+"1","50","10","1","1","1","1","TRUE","TRUE","FALSE","25.0465698378947","121.538832226576"
