@@ -87,23 +87,40 @@ fluidPage(
              tabPanel("預測租屋價查詢",
                       sidebarLayout(
                         sidebarPanel(
-                          selectInput("pre_region",
-                                      h4("選擇地區:"),
-                                      choices = taipei.region),
+                          # selectInput("pre_region",
+                          #             h4("選擇地點:"),
+                          #             choices = taipei.region),
+                          h4("選擇地點:"),
+                          wellPanel(style = "background-color: #ffffff;padding: 10px;",
+                                    h4(textOutput("lng")),
+                                    h4(textOutput("lat"))),
                           selectInput("pre_usage",
                                       h4("租屋用途:"),
                                       choices = taipei.house.usage),
                           numericInput("pre_area", h4("面積(平方公尺):"), 50),
                           numericInput("pre_age", h4("屋齡:"), 10),
-                          selectInput("pre_type", h4("房屋型態"), choices = taipei.house.feature)
+                          selectInput("pre_type", h4("房屋型態:"), choices = taipei.house.feature),
+                          fluidRow(
+                            column(4,numericInput("pre_n_room", h4("房:"), 1)),
+                            column(4,numericInput("pre_n_hall", h4("廳:"), 1)),
+                            column(4,numericInput("pre_n_bath", h4("衛:"), 1))
+                          ),
+                          fluidRow(
+                            column(4,checkboxInput("pre_is_comp", "隔間")),
+                            column(4,checkboxInput("pre_is_manage", "大樓管理")),
+                            column(4,checkboxInput("pre_is_furn", "家具"))
+                          )
                         ),
                         mainPanel(
-                          wellPanel(fluidRow(
-                            column(1),
-                            column(3, h4("預測價格:")),
-                            column(6, h4(textOutput("cursor"))),
-                            column(2, actionButton("pre_submit", "預測"))
-                          )),
+                          wellPanel(
+                            fluidRow(
+                              column(1),
+                              column(2, h4("價格:")),
+                              column(6, wellPanel(style = "background-color: #ffffff;")),
+                              column(1),
+                              column(2, actionButton("pre_submit", "預測"))
+                            )
+                          ),
                           leafletOutput("premap", width = "100%", height =400),
                           br()
                         )

@@ -6,38 +6,69 @@ mrt.data <- read.table("final_dataset/MRT_station_data.csv")
 bus.station.data <- read.table("final_dataset/bus_station_data.csv")
 park.data <- read.table("final_dataset/park.final.csv")
 store.data <- read.table("final_dataset/store_all.csv")
-fields <- c("region", "usage", "land", "building", "car_park", "select.function", "low_age", "high_age", "low_area", "high_area", "low_price", "high_price")
+fields_1 <- c("region", "usage", "land", "building", "car_park", "select.function", "low_age", "high_age", "low_area", "high_area", "low_price", "high_price")
+fields_2 <- c("pre_usage", "pre_area", "pre_age", "pre_type", "pre_n_room", "pre_n_hall", "pre_n_bath", "pre_is_comp", "pre_is_manage", "pre_is_furn")
+fileName_1 <- "user_search.csv"
+fileName_2 <- "user_predict.csv"
+
 
 
 outputDir <- "responses"
-saveData <- function(data) {
+saveData_1 <- function(data) {
   data <- as.data.frame(t(data))
-  if (exists("responses")) {
-    responses <<- rbind(responses, data)
+  if (exists("responses_1")) {
+    responses_1 <<- rbind(responses, data)
     # Create a unique file name
-    fileName <- "user_inputs.csv"
+    # fileName <- "user_inputs.csv"
     write.csv(
-      x = responses,
-      file = file.path(outputDir, fileName), 
+      x = responses_1,
+      file = file.path(outputDir, fileName_1), 
       row.names = FALSE, quote = TRUE
     )
   } else {
-    responses <<- data
-    fileName <- "user_inputs.csv"
+    responses_1 <<- data
+    # fileName <- "user_inputs.csv"
     write.csv(
-      x = responses,
-      file = file.path(outputDir, fileName), 
+      x = responses_1,
+      file = file.path(outputDir, fileName_1), 
       row.names = FALSE, quote = TRUE
     )
   }
 }
 
-loadData <- function() {
-  if (exists("responses")) {
-    responses
+saveData_2 <- function(data) {
+  data <- as.data.frame(t(data))
+  if (exists("responses_2")) {
+    responses_2 <<- rbind(responses, data)
+    # Create a unique file name
+    # fileName <- "user_inputs.csv"
+    write.csv(
+      x = responses_2,
+      file = file.path(outputDir, fileName_2), 
+      row.names = FALSE, quote = TRUE
+    )
+  } else {
+    responses_2 <<- data
+    # fileName <- "user_inputs.csv"
+    write.csv(
+      x = responses_2,
+      file = file.path(outputDir, fileName_2), 
+      row.names = FALSE, quote = TRUE
+    )
   }
 }
 
+loadData_1 <- function() {
+  if (exists("responses_1")) {
+    responses_1
+  }
+}
+
+loadData_2 <- function() {
+  if (exists("responses_2")) {
+    responses_1
+  }
+}
 
 function(input, output, session) {
   
@@ -51,20 +82,29 @@ function(input, output, session) {
   #convenient.store <- read.csv("")
   
   # Whenever a field is filled, aggregate all form data
-  fromData <- reactive({
-    data <- sapply(fields, function(x) input[[x]])
+  
+  fromData_1 <- reactive({
+    data <- sapply(fields_1, function(x) input[[x]])
+    data
+  })
+  
+  fromData_2 <- reactive({
+    data <- sapply(fields_2, function(x) input[[x]])
     data
   })
   
   # When the Submit button is clicked, save the form data
   observeEvent(input$submit, {
-    saveData(fromData())
+    saveData_1(fromData_1())
   })
   
+  observeEvent(input$pre_submit, {
+    saveData_2(fromData_2())
+  })
   # show the previous response
   output$responses <- DT::renderDataTable({
     input$submit
-    loadData()
+    loadData_1()
   })
   
   #######################################################
@@ -185,9 +225,14 @@ function(input, output, session) {
       )
   })
   
-  cursor <- reactive(
-    sprintf("lat%.3f  lng%.3f", input$premap_click[1], input$premap_click[2])
+  output$lng <- reactive(
+    sprintf("經度:%.3f", input$premap_click[1])
   )
+  
+  output$lat <- reactive(
+    sprintf("緯度:%.3f", input$premap_click[2])
+  )
+  
   
   output$cursor <- renderText(cursor())
   
