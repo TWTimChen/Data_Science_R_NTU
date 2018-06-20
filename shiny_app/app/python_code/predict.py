@@ -36,7 +36,8 @@ def predict_rental():
     with open('label_encoder.pkl', 'rb') as f:
         le = pickle.load(f)
         
-    tmp = pd.read_csv('../responses/user_predict.csv')[:-1].values.flatten()
+    tmp = pd.read_csv('../responses/user_predict.csv').values[-1, :].flatten()
+    print(tmp)
     tmp[[7, 8, 9]] = le.transform(tmp[[7, 8, 9]])
     
     
