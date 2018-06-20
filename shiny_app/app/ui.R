@@ -116,7 +116,8 @@ fluidPage(
                             fluidRow(
                               column(1),
                               column(2, h4("價格:")),
-                              column(6, wellPanel(style = "background-color: #ffffff;")),
+                              column(6, wellPanel(style = "background-color: #ffffff;",
+                                                  h4(textOutput("pre_return")))),
                               column(1),
                               column(2, actionButton("pre_submit", "預測"))
                             )

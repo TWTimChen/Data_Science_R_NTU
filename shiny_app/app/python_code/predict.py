@@ -87,6 +87,8 @@ def predict_rental():
     for i in range(13):
         x[0, mapping[i]] = tmp[i]
     y = model.predict(x)[0]
+    with open('../responses/return.txt', 'w') as f:
+        f.write(str(y*tmp[2]))
     return y*tmp[2]
 
 if __name__ == "__main__":

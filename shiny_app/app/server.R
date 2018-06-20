@@ -1,5 +1,10 @@
 library(magrittr)
 library(tidyverse)
+library(reticulate)
+
+path_to_python <- "/anaconda3/bin/python"
+use_python(path_to_python)
+
 
 real.estate.data <- read.csv("real_estate_ready.CSV")
 mrt.data <- read.table("final_dataset/MRT_station_data.csv")
@@ -234,9 +239,17 @@ function(input, output, session) {
     sprintf("緯度:%.3f", input$premap_click[2])
   )
   
-  
   output$cursor <- renderText(cursor())
   
+  price <- ""
+  res <- eventReactive(input$pre_submit,{
+    setwd("./python_code/")
+    source_python("predict.py")
+    Sys.sleep(1)
+    setwd("../")
+    price <<- scan("responses/return.txt", what="character")
+  })
+  output$pre_return <- renderText(res())
 }
 
 
