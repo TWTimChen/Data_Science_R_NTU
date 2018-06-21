@@ -12,7 +12,7 @@ taipei.house.usage <- list("住" = 1,"商" = 2,"工" = 3,"住商" = 4,"住工" =
 
 fluidPage(
   # start UI
-  titlePanel("房價查詢、預估平台"),
+  h1("iRenter"),
   navbarPage("功能",
              tabPanel("歷史租屋價查詢",
                       sidebarLayout(

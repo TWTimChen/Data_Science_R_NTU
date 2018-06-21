@@ -1,0 +1,5 @@
+"region","usage","land","building","car_park","select.function","low_age","high_age","low_area","high_area","low_price","high_price"
+"12","1","FALSE","TRUE","FALSE","1","0","100","1","100","1","100000"
+"12","5","FALSE","TRUE","FALSE","1","0","100","1","100","1","100000"
+"12","2","FALSE","TRUE","FALSE","1","0","100","1","100","1","100000"
+"12","1","FALSE","TRUE","FALSE","1","0","100","1","100","1","100000"
