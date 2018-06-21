@@ -39,12 +39,12 @@ For DS lessons in NTU
 
 ### [Project 4](https://github.com/TimAgro/Data_Science_R_NTU/tree/master/project4)
 * learned skills
-
+    * cause-effect exploration
 ### [Project 5](https://howardchao.github.io/CSX_RProject_Spring_2018/Project_5/Neural_netwok_number_dectector.html)
 * learned skills
-
-### [Final Project]
-#### iRenter
+    * DL understnding
+## Final Project
+### iRenter
 > 租金查詢與預測服務
 
 * [code](https://github.com/TimAgro/Data_Science_R_NTU/tree/master/final)
