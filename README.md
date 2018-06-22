@@ -11,6 +11,10 @@ For DS lessons in NTU
     * little knowledge about front-end
     * learning python & SQL currently
 
+### [Homework 1](https://github.com/TimAgro/Data_Science_R_NTU/tree/master/Shiny/linear_regresion)
+* learned skills
+    * Shiny toy use
+
 ### [Homework 2](https://github.com/TimAgro/Data_Science_R_NTU/tree/master/shopee_crawler)
 * learned skills
     * To simulate a browser
