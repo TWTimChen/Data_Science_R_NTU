@@ -36,6 +36,7 @@ shinyUI(fluidPage(
       #             wellPanel(plotOutput("plot")))
       sidebarLayout(
         sidebarPanel(
+          h2("選擇參數"),
           uiOutput("X"),
           uiOutput("Y"),
           actionButton("submit","Fit")
@@ -45,6 +46,27 @@ shinyUI(fluidPage(
           wellPanel(plotOutput("plot")),
           h3("Summary"),
           verbatimTextOutput("model")
+        )
+      )
+    ),
+    tabPanel(
+      "t-test",
+      sidebarLayout(
+        sidebarPanel(
+          h2("選擇參數"),
+          uiOutput("X.t"),
+          uiOutput("Y.t"),
+          selectInput("alternative", "檢定方式", list("雙尾"="two.sided", "左尾"="less", "右尾"="greater")),
+          # selectInput("paired", "配對樣本", list(TRUE, FALSE)),
+          numericInput("mu", "μ", 0),
+          numericInput("conf.level", "信賴區間", 0.95),
+          actionButton("submit.t","test")
+        ),
+        mainPanel(
+          h3("Plot"),
+          wellPanel(plotOutput("plot.t")),
+          h3("t-test"),
+          verbatimTextOutput("model.t")
         )
       )
     )

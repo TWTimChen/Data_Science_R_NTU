@@ -7,3 +7,5 @@
 聽到統計系教授說 spss 比 R 還要強大的多，聽得森77，
 於是決定用 R 寫一個 regression UI，雖然目前只是個雛形，
 至少可以平反一下了 orz
+
+* [app link](https://timchen.shinyapps.io/linear_regresion/)
