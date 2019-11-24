@@ -7,33 +7,32 @@ For DS lessons in NTU
 
 * learnig path
     * started to learn R from swirl() about 1 year ago
-    * have been trying to apply R in my daily life since then
-    * little knowledge about front-end
     * learning python & SQL currently
 
 ### [Homework 1](https://github.com/TimAgro/Data_Science_R_NTU/tree/master/Shiny/linear_regresion)
+* Simple Linear Regression & t-test web app
 * learned skills
-    * Shiny toy use
+    * Shiny layout implementation
+* [web link](https://timchen.shinyapps.io/linear_regresion/)    
 
 ### [Homework 2](https://github.com/TimAgro/Data_Science_R_NTU/tree/master/shopee_crawler)
+* online store crawler
 * learned skills
-    * To simulate a browser
-    * Post request headers 
-    * Looking for different APIs
-    * A bit data pipeline
+    * Get familiar with crawler packages
+    * Use headers & cookies to simulate a browser
+    * Use web's APIs to collect information
+    * Data Visualiztion
 
 ### [Homework 3](https://github.com/TimAgro/Data_Science_R_NTU/tree/master/Visaulization%20examples)
 * learned skills
-    * ggplot mapping intuition
-    * Familiar with plots
+    * Trying different visaulization method
 
 ### [Homework 4](https://github.com/TimAgro/Data_Science_R_NTU/tree/master/shopee_crawler)
 * learned skills
-    * Apply worldcloud 
+    * Apply worldcloud to the crawler case
 
 ### [Project 2](https://github.com/TimAgro/Data_Science_R_NTU/tree/master/project2)
 * learned skills
-    * Teamwork !
     * features selection
     * ML basic exploration
 
