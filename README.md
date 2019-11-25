@@ -53,6 +53,7 @@ For DS lessons in NTU
 * [code](https://github.com/TimAgro/Data_Science_R_NTU/tree/master/final)
 * [shiny app](https://github.com/TimAgro/Data_Science_R_NTU/tree/master/shiny_app)
 * [slides](https://docs.google.com/presentation/d/1nTlpXo0qPRBFUgiU1lf091g9LrFky60iWtdugIe8ngk/edit#slide=id.g3c74a6f8a0_2_5)
+* screen shot
 ![](https://i.imgur.com/fu0TjHg.jpg)
 ![](https://i.imgur.com/SOCFnaO.jpg)
 
